@@ -20,9 +20,14 @@ jobs:
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
+        with:
+          packages: ''
 
       - name: Install SDK components
-        run: sdkmanager "platforms;android-34" "build-tools;34.0.0"
+        run: |
+          export PATH="$ANDROID_HOME/cmdline-tools/latest/bin:$PATH"
+          yes | sdkmanager --licenses > /dev/null 2>&1 || true
+          sdkmanager "platforms;android-34" "build-tools;34.0.0"
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
