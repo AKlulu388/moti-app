@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#1a2332">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>母题题库</title>
+<style>
+:root{--bg:#0f1420;--card:#1a2332;--card2:#223047;--tx:#e8edf5;--tx2:#8fa1bb;--ac:#4da3ff;--ok:#3ddc84;--warn:#ffb74d;--bad:#ff6b6b;--bd:#2c3d57}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{background:var(--bg);color:var(--tx);font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;font-size:15px;padding-bottom:64px}
+header{position:sticky;top:0;z-index:9;background:var(--card);padding:14px 16px;font-size:17px;font-weight:600;border-bottom:1px solid var(--bd);display:flex;justify-content:space-between;align-items:center}
+header .sub{font-size:12px;color:var(--tx2);font-weight:400}
+main{padding:14px;max-width:720px;margin:0 auto}
+.tab{display:none}.tab.on{display:block}
+nav{position:fixed;bottom:0;left:0;right:0;z-index:9;background:var(--card);border-top:1px solid var(--bd);display:flex}
+nav button{flex:1;background:none;border:none;color:var(--tx2);padding:9px 0 10px;font-size:12px;display:flex;flex-direction:column;align-items:center;gap:2px}
+nav button .ic{font-size:20px}
+nav button.on{color:var(--ac)}
+textarea,input,select{width:100%;background:var(--card2);border:1px solid var(--bd);color:var(--tx);border-radius:10px;padding:11px;font-size:15px;font-family:inherit}
+textarea{min-height:110px;resize:vertical}
+.btn{display:inline-block;background:var(--ac);color:#fff;border:none;border-radius:10px;padding:12px 18px;font-size:15px;font-weight:600;cursor:pointer}
+.btn.block{display:block;width:100%;margin-top:12px}
+.btn.ghost{background:var(--card2);color:var(--tx);border:1px solid var(--bd)}
+.btn.ok{background:var(--ok);color:#08281a}
+.btn.bad{background:var(--bad)}
+.btn.sm{padding:8px 12px;font-size:13px}
+.btn:disabled{opacity:.5}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:14px;margin-bottom:12px}
+.badge{display:inline-block;font-size:12px;padding:3px 9px;border-radius:20px;margin:0 6px 6px 0}
+.badge.b0{background:#123524;color:var(--ok)}
+.badge.b1{background:#123047;color:var(--ac)}
+.badge.b2{background:#3a2a12;color:var(--warn)}
+.badge.b3{background:#3a1a1a;color:var(--bad)}
+.chip{display:inline-block;background:var(--card2);border:1px solid var(--bd);color:var(--tx);font-size:13px;padding:4px 10px;border-radius:20px;margin:0 6px 6px 0}
+.mname{font-size:16px;font-weight:600;margin-bottom:4px}
+.meta{font-size:12px;color:var(--tx2);margin-bottom:8px}
+.sec{font-size:13px;color:var(--tx2);margin:8px 0 4px;font-weight:600}
+.sol{font-size:14px;line-height:1.7;padding-left:18px}
+.sol li{margin-bottom:2px}
+.kp{font-size:13px;line-height:1.6;color:var(--tx);background:var(--card2);border-radius:8px;padding:8px 10px;margin-top:4px}
+.cv{font-size:13px;line-height:1.6;color:var(--warn)}
+.math{font-family:Menlo,Consolas,monospace;font-size:13px;word-break:break-all;color:#bcd3f0}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.stat{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:12px;text-align:center}
+.stat .v{font-size:22px;font-weight:700;color:var(--ac)}
+.stat .l{font-size:12px;color:var(--tx2);margin-top:2px}
+.mask{display:none;position:fixed;inset:0;z-index:20;background:rgba(0,0,0,.6);align-items:flex-end;justify-content:center}
+.mask.on{display:flex}
+.sheet{background:var(--card);width:100%;max-width:720px;max-height:82vh;overflow-y:auto;border-radius:18px 18px 0 0;padding:18px 16px 26px}
+.sheet h3{font-size:16px;margin-bottom:12px}
+.ck{display:flex;align-items:center;gap:10px;padding:10px 8px;border-bottom:1px solid var(--bd);font-size:14px}
+.ck input{width:20px;height:20px;flex:none}
+.hint{font-size:12px;color:var(--tx2);line-height:1.6;margin-top:8px}
+.logitem{font-size:13px;padding:9px 0;border-bottom:1px solid var(--bd);color:var(--tx2);word-break:break-all}
+.logitem b{color:var(--tx)}
+label.f{display:block;font-size:13px;color:var(--tx2);margin:10px 0 5px}
+.toast{position:fixed;left:50%;bottom:80px;transform:translateX(-50%);background:#2c3d57;color:var(--tx);padding:10px 18px;border-radius:24px;font-size:13px;z-index:30;display:none;max-width:86vw;text-align:center}
+.empty{color:var(--tx2);text-align:center;padding:30px 0;font-size:14px}
+details summary{cursor:pointer;font-size:13px;color:var(--ac);margin-top:6px}
+</style>
+</head>
+<body>
+<header><span>母题题库</span><span class="sub" id="hdSub">DeepSeek识别 · 本地自学习</span></header>
+<main>
+
+<!-- 识题 -->
+<section class="tab on" id="tab-rec">
+  <div class="card">
+    <textarea id="qInput" placeholder="输入或粘贴题目（支持 LaTeX），例如：&#10;函数 $f(x)=\dfrac{1}{\sqrt{3x-2}}+(x-2)^0$ 的定义域为____"></textarea>
+    <button class="btn block" id="btnRec">识别题目</button>
+    <div class="hint">三层漏斗省 token：①已学过的题直接缓存命中 ②本地神经网络有把握就本地判 ③都没把握才调 DeepSeek（只传母题目录+题目，限定短输出）</div>
+  </div>
+  <div id="recResult"></div>
+</section>
+
+<!-- 母题库 -->
+<section class="tab" id="tab-lib">
+  <button class="btn block" id="btnAddMotif" style="margin:0 0 12px">＋ 新母题入库</button>
+  <div id="libList"></div>
+</section>
+
+<!-- 学习 -->
+<section class="tab" id="tab-learn">
+  <div class="grid" id="statGrid"></div>
+  <div class="card" style="margin-top:12px">
+    <div class="sec" style="margin-top:0">学习样本（最近20条）</div>
+    <div id="sampleLog"></div>
+  </div>
+  <div class="row">
+    <button class="btn ghost sm" id="btnExport">导出备份</button>
+    <button class="btn ghost sm" id="btnImport">导入备份</button>
+    <button class="btn bad sm" id="btnReset">清空学习数据</button>
+  </div>
+  <input type="file" id="fileImport" accept=".json,application/json" style="display:none">
+  <div class="hint">本地神经网络跟随 DeepSeek 判定与你的纠正持续学习，样本越多本地拦截率越高、API 调用越少。换手机前请先导出备份。</div>
+</section>
+
+<!-- 设置 -->
+<section class="tab" id="tab-set">
+  <div class="card">
+    <label class="f" style="margin-top:0">DeepSeek API Key（仅存本机）</label>
+    <input type="password" id="apiKey" placeholder="sk-..." autocomplete="off">
+    <label class="f">模型</label>
+    <select id="model"><option value="deepseek-chat">deepseek-chat（推荐，快且省）</option><option value="deepseek-reasoner">deepseek-reasoner（推理更强，token更多）</option></select>
+    <label class="f">本地神经网络置信阈值：<span id="thVal">0.85</span></label>
+    <input type="range" id="threshold" min="0.5" max="0.99" step="0.01" value="0.85" style="padding:0">
+    <div class="hint">阈值越高越谨慎（更多题交给 DeepSeek 判，更准但更耗 token）；越低越省 token。建议保持 0.85。</div>
+    <button class="btn block" id="btnSaveSet">保存设置</button>
+  </div>
+  <div class="card">
+    <div class="sec" style="margin-top:0">使用说明</div>
+    <div class="hint" style="margin-top:0">
+      1. 在 platform.deepseek.com 创建 API Key 并充值少量金额，填入上方保存。<br>
+      2. 识别结果不对时点「改选母题」，你的纠正会直接教会本地网络，不花 token。<br>
+      3. 组合题会同时给出多个母题；也可自己多选组合确认，下次相似题直接认识。<br>
+      4. Key 与学习数据只保存在本机，不上传任何服务器；识别时题目仅发送给 DeepSeek 官方接口。<br>
+      5. 若提示网络/跨域错误，请检查网络后重试。
+    </div>
+  </div>
+</section>
+</main>
+
+<nav>
+  <button class="on" data-tab="tab-rec"><span class="ic">🎯</span>识题</button>
+  <button data-tab="tab-lib"><span class="ic">📚</span>母题库</button>
+  <button data-tab="tab-learn"><span class="ic">🧠</span>学习</button>
+  <button data-tab="tab-set"><span class="ic">⚙️</span>设置</button>
+</nav>
+
+<!-- 改选母题 -->
+<div class="mask" id="maskPick"><div class="sheet">
+  <h3>选择正确的母题（组合题可多选）</h3>
+  <div id="pickList"></div>
+  <button class="btn block" id="btnPickOk">确认并学习</button>
+  <button class="btn ghost block" id="btnPickCancel">取消</button>
+</div></div>
+
+<!-- 新母题 -->
+<div class="mask" id="maskAdd"><div class="sheet">
+  <h3>新母题入库</h3>
+  <label class="f" style="margin-top:0">母题名称 *</label><input id="amName">
+  <label class="f">章节</label><input id="amChapter" placeholder="如：第5讲 函数周期性">
+  <label class="f">例题 *</label><textarea id="amSample" style="min-height:70px"></textarea>
+  <label class="f">触发特征（逗号分隔）*</label><input id="amTriggers" placeholder="周期, f(x+T)=f(x)">
+  <label class="f">识别规则（逗号分隔）*</label><input id="amRules" placeholder="已知周期求远处函数值">
+  <label class="f">大招名称</label><input id="amMoveName" placeholder="无">
+  <label class="f">解法步骤（每行一条）</label><textarea id="amSolution" style="min-height:60px"></textarea>
+  <button class="btn block" id="btnAddOk">入库并学习</button>
+  <button class="btn ghost block" id="btnAddCancel">取消</button>
+</div></div>
+
+<!-- 导出文本 -->
+<div class="mask" id="maskExport"><div class="sheet">
+  <h3>备份数据（长按全选复制保存）</h3>
+  <textarea id="exportText" style="min-height:160px;font-size:12px" readonly></textarea>
+  <button class="btn block" id="btnExportClose">关闭</button>
+</div></div>
+
+<div class="toast" id="toast"></div>
+
+<script id="engine">
+/* ============ 核心引擎（无DOM依赖，可独立测试） ============ */
+(function(){
+"use strict";
+var DIM=512, HID=32;
+var SEED=[{"name":"具体函数的定义域","subject":"数学","chapter":"第1讲 函数三要素","difficulty":"简单","sampleQuestion":"函数 $f(x)=\\dfrac{1}{\\sqrt{3x-2}}+(x-2)^0$ 的定义域为____","triggers":["解析式含√","解析式含分式分母","解析式含零次幂","解析式含log","求x可取的范围"],"solution":["根据解析式类型列出全部限制不等式","分别求解每一个不等式","所有约束解集取交集得到定义域"],"keyPoints":["偶次根号内部≥0；分母≠0；零次幂底数≠0；对数真数>0；运算函数定义域取交集"],"moveName":"无","move":"常规分步列约束条件，解不等式组取交集","caveat":["分母中出现根号时，约束应为内部＞0，错误写成≥0；遗漏部分限制条件，忘记取交集"],"modelIdentify":"具体函数多约束定义域求解模型"},{"name":"抽象函数定义域","subject":"数学","chapter":"第1讲 函数三要素","difficulty":"中档","sampleQuestion":"若函数 $f(x)$ 的定义域为$(-2,2)$，则函数 $f(2x)$ 的定义域为()","triggers":["多处出现f( )括号符号","给出某一个f(...)对应的x范围","求另一个f(...)对应的x范围"],"solution":["定义域永远代表自变量x的取值范围","同一f，括号内整体表达式取值范围相等","列出不等式，叠加根式分式对数附加约束，求交集"],"keyPoints":["区分自变量x范围与括号内整体范围；同一个f括号内整体范围不变"],"moveName":"永恒大法","move":"定义域永远是x的范围；同一个f，()里面的范围永远不变；列不等式求解，附加约束取交集","caveat":["把括号整体的范围误当作x定义域；复合时容易漏掉解析式自带的根号、分式限制"],"modelIdentify":"抽象复合函数定义域识别模型，触发永恒大法"},{"name":"二次(型)函数值域","subject":"数学","chapter":"第1讲 函数三要素","difficulty":"中档","sampleQuestion":"若函数 $f(x)=x^2-4x+1,x\\in[-1,4]$，则函数的值域为()","triggers":["式子含x²","给定x的闭区间[a,b]","可换元得到t²项","求y的取值集合"],"solution":["判断抛物线开口方向","判断对称轴与给定区间的位置关系","计算顶点、区间端点函数值，对比得到最大、最小值，写出值域"],"keyPoints":["一看开口，二看轴，三看定义域不能忘；区间值域必须结合定义域"],"moveName":"一看开口，二看轴，三看定义域不能忘","move":"先看开口方向；判断对称轴在区间内还是区间外；计算顶点以及区间端点函数值，确定值域","caveat":["忽略题目给定区间，直接使用R上二次函数最值；对称轴在区间外时错误代入顶点计算最值"],"modelIdentify":"定区间二次(型)函数值域模型"},{"name":"根式型函数值域","subject":"数学","chapter":"第1讲 函数三要素","difficulty":"中档","sampleQuestion":"函数 $y=2x-\\sqrt{1-x}$ 的值域为()","triggers":["解析式含有√(cx+d)","一次项和根号相加/相减","求y的取值集合"],"solution":["换元令t等于根式整体，必须带上t≥0","把原函数转化为普通一次/二次函数","结合t≥0的约束求新函数的值域"],"keyPoints":["换元一定要带上新元t≥0；优先使用换元法，也可以用单调性法"],"moveName":"无","move":"换元法：令t=√(cx+d)，t≥0，转化为普通函数求值域；也可用单调性法","caveat":["换元忘记写t≥0，直接在全体实数上计算函数值域，结果出错"],"modelIdentify":"根式换元求值域模型"},{"name":"分段函数求值、值域","subject":"数学","chapter":"第1讲 函数三要素","difficulty":"中档","sampleQuestion":"已知函数 $f(x)=\\begin{cases}x^2-2,&x \\le 0\\\\f(x-3),&x>0\\end{cases}$，则 $f(7)=$()","triggers":["函数使用大括号分段书写","每一段附带x条件","给出x求y / 求y的取值集合"],"solution":["判断自变量属于哪一段的定义域区间","带入该段对应的解析式进行计算","求值域分别求出每一段的值域，全部取并集"],"keyPoints":["自变量落在哪一段，就使用哪一段表达式；多段值域结果取并集"],"moveName":"无","move":"分段匹配：自变量匹配对应区间，选用对应解析式；值域各段结果取并集","caveat":["自变量跨区间混用解析式；求值域忘记把每一段值域合并取并集"],"modelIdentify":"分段函数匹配模型"},{"name":"指数对数运算化简","subject":"数学","chapter":"第2讲 指对幂函数","difficulty":"简单","sampleQuestion":"化简 $\\log_2 12-\\log_2 3+3^{\\log_35}$","triggers":["式子出现$a^x$","式子出现$\\log$","式子包含指数对数混合","求式子数值"],"solution":["运用指数、对数运算法则拆分合并","换底公式统一底数","化简计算结果"],"keyPoints":["$\\log_a a=1,\\log_a1=0$；换底公式；$a^{\\log_aN}=N$"],"moveName":"无","move":"按运算法则拆分、合并，底数不同时用换底公式统一底数","caveat":["对数加减运算和乘除公式混淆；真数拆分错误"],"modelIdentify":"指对基础运算，纯公式代入"},{"name":"指对幂函数图像判断","subject":"数学","chapter":"第2讲 指对幂函数","difficulty":"中档","sampleQuestion":"函数 $y=2^x-1$ 的大致图像为()","triggers":["$a^x$、$\\log_ax$、$x^\\alpha$","给出函数选图像","根据图像求底数范围"],"solution":["判断底数范围，确定单调性","过定点，判断增减趋势","结合特殊点0、1判断图像"],"keyPoints":["指数过(0,1)；对数过(1,0)；底数>1递增，0<底数<1递减"],"moveName":"无","move":"定点+底数判断单调性，结合特殊函数值区分图像","caveat":["底数范围和增减性搞反；幂函数和指数函数区分不清"],"modelIdentify":"指对幂图像识别模型"},{"name":"零点个数求参","subject":"数学","chapter":"第2讲 指对幂函数","difficulty":"较难","sampleQuestion":"已知函数 $f(x)=2^x-ax$ 有2个零点，求实数$a$的取值范围","triggers":["方程等于0","零点","图像交点个数","式子带参数","求参数范围"],"solution":["方程变形，拆成两个熟悉函数","画出两个函数图像","根据交点个数确定参数范围"],"keyPoints":["零点等价于两个函数图像交点；数形结合是核心"],"moveName":"数形分离法","move":"零点问题转化为方程，左右拆成两个初等函数，画图，根据交点数量反求参数","caveat":["画图遗漏渐近线；端点处等号取舍出错"],"modelIdentify":"零点数形分离模型"},{"name":"指对不等式求解","subject":"数学","chapter":"第2讲 指对幂函数","difficulty":"中档","sampleQuestion":"解不等式 $\\log_2(x-1)<1$","triggers":["式子带$a^x$、$\\log$","出现不等号","求x的范围"],"solution":["判断底数，确定单调性","脱去指对符号，转化代数不等式","叠加对数真数>0约束，取交集"],"keyPoints":["脱符号必须同步判断单调性；对数一定要附加真数大于0"],"moveName":"无","move":"利用单调性脱去指数、对数外壳，转化普通不等式，对数附加真数限制","caveat":["0<底数<1时不等号方向忘记翻转；对数漏掉真数>0"],"modelIdentify":"指对不等式脱壳模型"},{"name":"指对幂比大小","subject":"数学","chapter":"第2讲 指对幂函数","difficulty":"中档","sampleQuestion":"比较 $0.7^{0.8},0.8^{0.7},\\log_{0.8}0.7$ 的大小","triggers":["多个数，包含指数、对数、幂形式","要求比较数的大小"],"solution":["找中间量0、1","同底看单调性，同指数看图像","不同底不同指构造函数"],"keyPoints":["优先和0、1对比；同结构构造函数"],"moveName":"无","move":"中间量法，优先对比0,1；同底看单调；不同底不同指构造辅助函数","caveat":["乱用单调性，底数没有统一直接比较；忽略中间量分界"],"modelIdentify":"指对幂数值比大小模型"},{"name":"函数单调性判定","subject":"数学","chapter":"第3讲 函数单调性","difficulty":"中档","sampleQuestion":"判断函数 $f(x)=x+\\dfrac1x$ 在区间 $(1,+\\infty)$ 单调性","triggers":["给定函数解析式","给定x区间","判断增减性质"],"solution":["定义法作差判断正负；或求导看导函数符号；复合函数同增异减","得到单调递增/递减结论"],"keyPoints":["复合函数：同增异减；导数>0单调递增，导数<0单调递减"],"moveName":"同增异减(复合函数)","move":"复合函数内外层单调性相同则整体增，相反则整体减；普通函数用作差法或导数法","caveat":["单调区间错误写并集；作差变形不到位直接判断符号"],"modelIdentify":"单调性判定模型"},{"name":"已知单调性求参数","subject":"数学","chapter":"第3讲 函数单调性","difficulty":"较难","sampleQuestion":"函数 $f(x)=\\begin{cases}(2-a)x+1,&x<1\\\\a^x,&x\\ge1\\end{cases}$ 在$R$上单调递增，求$a$取值范围","triggers":["解析式含有参数","给出单调递增/递减条件","求参数范围"],"solution":["分段函数：每一段满足单调；分段点处满足大小关系","导数题型：导数≥0恒成立(递增)/≤0恒成立(递减)"],"keyPoints":["分段单调既要每段单调，还要衔接点满足大小关系；注意等号取舍"],"moveName":"无","move":"每段单调性约束+分段点函数值约束；可导函数转化导数恒成立问题","caveat":["分段函数漏掉分段点的大小约束；恒成立时等号处理出错"],"modelIdentify":"已知单调性反求参数模型"},{"name":"利用单调性解抽象不等式","subject":"数学","chapter":"第3讲 函数单调性","difficulty":"中档","sampleQuestion":"已知$f(x)$定义域$[-2,2]$，$f(x)$单调递增，$f(1-m)<f(m)$，求$m$范围","triggers":["给出$f()$抽象函数","给出单调条件","$f(...) < f(...)$形式不等式"],"solution":["先写定义域约束","利用单调性脱掉f外壳，转化自变量不等式","全部条件取交集"],"keyPoints":["脱外壳必须带上原始函数定义域约束，不能直接脱掉f"],"moveName":"单调脱壳法","move":"先列出自变量全部在定义域内，利用单调性去掉函数符号f，解不等式取交集","caveat":["直接脱掉f，忘记自变量必须在定义域内，漏掉约束条件"],"modelIdentify":"单调性抽象不等式脱壳模型"},{"name":"奇偶性判定","subject":"数学","chapter":"第4讲 函数奇偶性","difficulty":"中档","sampleQuestion":"下列函数为奇函数的是：A.$y=\\sqrt{x}$ B.$y=|\\sin x|$ C.$y=\\cos x$ D.$y=e^x-e^{-x}$","triggers":["给出函数解析式","判断是奇函数/偶函数/非奇非偶"],"solution":["第一步判断定义域是否关于原点对称","第二步计算$f(-x)$，对比$f(-x)$与$f(x),-f(x)$"],"keyPoints":["定义域不关于原点对称直接非奇非偶；奇⇒f(-x)=-f(x)；偶⇒f(-x)=f(x)"],"moveName":"无","move":"定义法：①检验定义域关于原点对称；②计算f(-x)对比；也可用奇偶四则、复合口诀","caveat":["跳过定义域检验直接计算f(-x)；复合口诀记错：有偶则偶，全奇才奇"],"modelIdentify":"奇偶性判定模型，定义域优先"},{"name":"已知奇偶性求参数","subject":"数学","chapter":"第4讲 函数奇偶性","difficulty":"中档","sampleQuestion":"若 $f(x)=\\ln(1+\\dfrac{2}{x+b})$ 为奇函数，则$b=$___","triggers":["函数带参数","给出奇函数/偶函数条件","求参数值"],"solution":["方法1：定义域关于原点对称","方法2：特值代入（0在定义域可用f(0)=0）","方法3：定义式恒成立比较系数","方法4：奇偶四则运算法则"],"keyPoints":["定义域对称是前提；特值法只是必要条件，做完最好回代检验"],"moveName":"无","move":"四途径：定义域对称/特殊值/定义恒等式/奇偶四则；特值结果务必回代验证","caveat":["只用特值法不回代检验产生增根；忽略定义域约束条件"],"modelIdentify":"已知奇偶性求参模型"},{"name":"机场(奇常)模型 已知奇偶性求值","subject":"数学","chapter":"第4讲 函数奇偶性","difficulty":"中档","sampleQuestion":"已知 $f(x)=\\ln(\\sqrt{1+x^2}-x)+1$，$f(a)=4$，求 $f(-a)$","triggers":["函数可以拆成两部分","定义域关于原点对称","已知$f(a)$求$f(-a)$ / 求最大值M+最小值m"],"solution":["拆分 $F(x)=g(x)+b$，$g(x)$为奇函数","使用结论 $F(a)+F(-a)=2b$，$M+m=2b$"],"keyPoints":["函数拆分为奇函数加常数；定义域必须关于原点对称"],"moveName":"机场(奇常)模型","move":"①化奇常：分离奇函数g(x)与常数b；②二倍常：F(a)+F(-a)=2b；M+m=2b","caveat":["定义域不对称不能套用；不能把整个函数直接当奇函数，必须拆分"],"modelIdentify":"机场（奇常）模型"},{"name":"半区间求解析式（变身大法）","subject":"数学","chapter":"第4讲 函数奇偶性","difficulty":"中档","sampleQuestion":"已知$f(x)$是定义在$R$上的奇函数，且当 $x>0$ 时，$f(x)=(x^2-3) e^x+2$，则当 $x<0$ 时，$f(x)=$___","triggers":["给出奇函数/偶函数","给出一半x范围上解析式","求另一半x范围解析式"],"solution":["设所求区间内x，则-x落在已知区间","代入已知解析式","利用奇偶性转化得到f(x)；口诀：偶一变，奇两变"],"keyPoints":["偶函数替换x→-x；奇函数替换后整体加负号"],"moveName":"变身大法（偶一变，奇两变）","move":"①设目标区间x，-x进入已知区间；②代入已知表达式；③偶直接替换，奇整体添负号","caveat":["奇函数忘记整体加负号；混淆哪部分是-x代入"],"modelIdentify":"半区间求解析式模型"},{"name":"复杂函数图像识别（奇偶+特殊点+趋势）","subject":"数学","chapter":"第4讲 函数奇偶性","difficulty":"中档","sampleQuestion":"函数 $f(x)=-x^2+(e^x-e^{-x})\\sin x$ 在区间$[-2,2]$的图像大致为()","triggers":["给出复杂函数解析式","选出大致图像"],"solution":["步骤1定性：判定奇偶性，排除部分选项","步骤2定量：代入特殊点算符号，看无穷趋势，继续排除"],"keyPoints":["先奇偶性第一轮筛选，再特殊点、极限趋势进一步排除"],"moveName":"无","move":"①定性：奇偶性、单调性排除选项；②定量：特殊点、无穷趋势逐步筛选","caveat":["直接计算大量点浪费时间；忽略奇偶快速排除"],"modelIdentify":"复杂函数图像识别模型"},{"name":"脱壳法解奇偶单调性综合不等式","subject":"数学","chapter":"第4讲 函数奇偶性","difficulty":"较难","sampleQuestion":"已知$f(x)$为定义在$R$上奇函数，$f(x)$在$(-\\infty,0)$单调递减，且$f(2)=0$，求$xf(x-1)\\ge0$解集","triggers":["给出奇函数/偶函数+单调条件","给出$f(...)>f(...)$不等式形式"],"solution":["判断奇偶性、单调性","奇函数直接脱壳；偶函数脱壳后自变量加绝对值","带上定义域约束取交集"],"keyPoints":["奇：f(a)>f(b)⇒a>b；偶：f(a)>f(b)⇒|a|>|b|；不能丢定义域"],"moveName":"脱壳法","move":"①判断奇偶性、单调性；②奇直接脱f，偶脱f加绝对值；③叠加定义域取交集","caveat":["偶函数脱壳忘记写绝对值；忽略自变量定义域限制"],"modelIdentify":"脱壳法解奇偶单调综合不等式模型"}];
+
+function normalize(s){
+  s=String(s||'');
+  s=s.replace(/\\dfrac/g,'\\frac').replace(/\\left|\\right/g,'');
+  s=s.replace(/[\uFF01-\uFF5E]/g,function(c){return String.fromCharCode(c.charCodeAt(0)-0xFEE0);});
+  s=s.replace(/\u3000/g,' ');
+  s=s.replace(/\s+/g,'');
+  return s;
+}
+function cacheKey(s){return normalize(s).replace(/\d/g,'0');}
+function hashIdx(str){var h=5381;for(var i=0;i<str.length;i++){h=((h<<5)+h+str.charCodeAt(i))|0;}return (h>>>0)%DIM;}
+function features(text){
+  var t=normalize(text).replace(/\d/g,'0');
+  var v=new Float64Array(DIM);
+  var cjk=t.match(/[\u4e00-\u9fff]+/g)||[];
+  for(var a=0;a<cjk.length;a++){var seg=cjk[a];
+    if(seg.length===1){v[hashIdx('c:'+seg)]+=1;}
+    for(var i=0;i<seg.length-1;i++){v[hashIdx('c:'+seg.substr(i,2))]+=1;}}
+  var lx=t.match(/\\[a-zA-Z]+/g)||[];
+  for(var b=0;b<lx.length;b++){v[hashIdx('l:'+lx[b])]+=1.5;}
+  var as=t.match(/[a-zA-Z]+/g)||[];
+  for(var c=0;c<as.length;c++){v[hashIdx('a:'+as[c].toLowerCase())]+=1;}
+  var n=0;for(var k=0;k<DIM;k++){n+=v[k]*v[k];}
+  n=Math.sqrt(n);if(n>0){for(var j=0;j<DIM;j++){v[j]/=n;}}
+  return v;
+}
+
+/* 小型 MLP：DIM→HID→nc，sigmoid 多标签，Adam */
+function NN(nc){
+  var s=42;function rnd(){s=(s*1103515245+12345)&0x7fffffff;return s/0x7fffffff-0.5;}
+  this.nc=nc;this.t=0;
+  this.W1=new Float64Array(DIM*HID);this.b1=new Float64Array(HID);
+  this.W2=new Float64Array(HID*nc);this.b2=new Float64Array(nc);
+  var i,s1=Math.sqrt(2/DIM)*2,s2=Math.sqrt(2/HID)*2;
+  for(i=0;i<DIM*HID;i++)this.W1[i]=rnd()*s1;
+  for(i=0;i<HID*nc;i++)this.W2[i]=rnd()*s2;
+  this.ad={};
+}
+NN.prototype.forward=function(x){
+  var a1=new Float64Array(HID),p=new Float64Array(this.nc),j,c,sum;
+  for(j=0;j<HID;j++){sum=this.b1[j];for(var i=0;i<DIM;i++)sum+=x[i]*this.W1[i*HID+j];a1[j]=sum>0?sum:0;}
+  for(c=0;c<this.nc;c++){sum=this.b2[c];for(j=0;j<HID;j++)sum+=a1[j]*this.W2[j*this.nc+c];
+    sum=Math.max(-30,Math.min(30,sum));p[c]=1/(1+Math.exp(-sum));}
+  return {a1:a1,p:p};
+};
+NN.prototype._adam=function(name,param,g,lr){
+  this.t++;var st=this.ad[name];
+  if(!st){st=this.ad[name]={m:new Float64Array(param.length),v:new Float64Array(param.length)};}
+  var b1=0.9,b2=0.999,eps=1e-8,c1=1-Math.pow(b1,this.t),c2=1-Math.pow(b2,this.t);
+  for(var i=0;i<param.length;i++){
+    st.m[i]=b1*st.m[i]+(1-b1)*g[i];
+    st.v[i]=b2*st.v[i]+(1-b2)*g[i]*g[i];
+    param[i]-=lr*(st.m[i]/c1)/(Math.sqrt(st.v[i]/c2)+eps);}
+};
+NN.prototype.train=function(X,Y,steps,lr){
+  var n=X.length,nc=this.nc,self=this;
+  for(var s=0;s<steps;s++){
+    var gW1=new Float64Array(DIM*HID),gb1=new Float64Array(HID),
+        gW2=new Float64Array(HID*nc),gb2=new Float64Array(nc);
+    for(var k=0;k<n;k++){
+      var x=X[k],y=Y[k],f=self.forward(x),a1=f.a1,p=f.p;
+      var dz1=new Float64Array(HID),j,c,i;
+      for(c=0;c<nc;c++){
+        var d=(p[c]-y[c])/n;
+        gb2[c]+=d;
+        for(j=0;j<HID;j++){gW2[j*nc+c]+=a1[j]*d;dz1[j]+=d*self.W2[j*nc+c];}
+      }
+      for(j=0;j<HID;j++){
+        if(a1[j]<=0)continue;var dz=dz1[j];gb1[j]+=dz;
+        for(i=0;i<DIM;i++){if(x[i]!==0)gW1[i*HID+j]+=x[i]*dz;}
+      }
+    }
+    self._adam('W1',self.W1,gW1,lr);self._adam('b1',self.b1,gb1,lr);
+    self._adam('W2',self.W2,gW2,lr);self._adam('b2',self.b2,gb2,lr);
+  }
+};
+NN.prototype.predict=function(x){return this.forward(x).p;};
+
+var SYS='你是高中数学母题匹配器。读题提取考点，从母题目录选出对应编号（组合题可选多个）。只输出JSON，格式{"k":["考点短语"],"m":[编号]}，不要输出其他内容。';
+
+function createEngine(opts){
+  var storage=opts.storage,fetchImpl=opts.fetch;
+  var E={};
+  E.motifs=[];E.samples=[];E.cache={};E.stats={apiCalls:0,tokensUsed:0,localHits:0,cacheHits:0,corrections:0};
+  E.settings={apiKey:'',model:'deepseek-chat',localThreshold:0.85,minSamples:6};
+  var nn=null;
+  function load(k,d){try{var v=storage.getItem(k);return v?JSON.parse(v):d;}catch(e){return d;}}
+  function save(k,v){try{storage.setItem(k,JSON.stringify(v));}catch(e){}}
+  function persist(){save('mt.motifs',E.motifs);save('mt.samples',E.samples);save('mt.cache',E.cache);save('mt.stats',E.stats);save('mt.settings',E.settings);}
+  function bootstrap(){
+    for(var i=0;i<E.motifs.length;i++){var sq=E.motifs[i].sampleQuestion;
+      if(!sq)continue;var key=cacheKey(sq);
+      var exist=false;for(var j=0;j<E.samples.length;j++){if(E.samples[j].key===key){exist=true;break;}}
+      if(!exist)E.samples.push({key:key,q:sq,ids:[i],k:[],source:'seed',ts:''});}
+  }
+  function trainAll(epochs){
+    nn=new NN(E.motifs.length);
+    if(!E.samples.length)return;
+    var X=[],Y=[];
+    for(var i=0;i<E.samples.length;i++){
+      X.push(features(E.samples[i].q));
+      var y=new Float64Array(E.motifs.length);
+      for(var j=0;j<E.samples[i].ids.length;j++){var id=E.samples[i].ids[j];if(id>=0&&id<E.motifs.length)y[id]=1;}
+      Y.push(y);}
+    nn.train(X,Y,epochs||80,0.02);
+  }
+  function upsertSample(key,q,ids,k,source){
+    for(var i=0;i<E.samples.length;i++){if(E.samples[i].key===key){
+      E.samples[i].ids=ids;E.samples[i].k=k||E.samples[i].k;E.samples[i].source=source;E.samples[i].q=q;E.samples[i].ts=new Date().toISOString();return;}}
+    E.samples.push({key:key,q:q,ids:ids,k:k||[],source:source,ts:new Date().toISOString()});
+  }
+  function names(ids){var out=[];for(var i=0;i<ids.length;i++){if(E.motifs[ids[i]])out.push(E.motifs[ids[i]].name);}return out;}
+  function catalog(){var s='母题目录：\n';for(var i=0;i<E.motifs.length;i++){s+=(i+1)+'.'+E.motifs[i].name+'\n';}return s;}
+  function parseDS(content){
+    var t=String(content||'').replace(/```json|```/g,'');
+    var a=t.indexOf('{'),b=t.lastIndexOf('}');
+    if(a<0||b<0)throw new Error('DeepSeek返回格式异常');
+    var obj=JSON.parse(t.substring(a,b+1));
+    var ids=[];(obj.m||[]).forEach(function(x){var id=parseInt(x,10)-1;if(id>=0&&id<E.motifs.length&&ids.indexOf(id)<0)ids.push(id);});
+    return {k:obj.k||[],ids:ids};
+  }
+  E.init=function(){
+    E.motifs=load('mt.motifs',null)||JSON.parse(JSON.stringify(SEED));
+    E.samples=load('mt.samples',[]);
+    E.cache=load('mt.cache',{});
+    var st=load('mt.stats',null);if(st)E.stats=st;
+    var se=load('mt.settings',null);if(se){for(var k in E.settings){if(se[k]!==undefined)E.settings[k]=se[k];}}
+    bootstrap();trainAll(80);persist();
+  };
+  E.recognize=function(q,opts2){
+    opts2=opts2||{};
+    var key=cacheKey(q);
+    if(!opts2.forceApi&&E.cache[key]){
+      E.stats.cacheHits++;persist();
+      var c=E.cache[key];
+      return Promise.resolve({source:'cache',ids:c.ids,kaodian:c.kaodian||[],names:names(c.ids),tokens:0,combo:c.ids.length>1});
+    }
+    if(!opts2.forceApi&&E.samples.length>=E.settings.minSamples&&nn){
+      var p=nn.predict(features(q)),ids=[],max=0;
+      for(var i=0;i<p.length;i++){if(p[i]>max)max=p[i];if(p[i]>=0.5)ids.push(i);}
+      if(max>=E.settings.localThreshold&&ids.length>0){
+        E.stats.localHits++;persist();
+        var k=[];for(var j=0;j<E.samples.length;j++){if(E.samples[j].key===key){k=E.samples[j].k;break;}}
+        return Promise.resolve({source:'local',ids:ids,kaodian:k,names:names(ids),tokens:0,combo:ids.length>1,confidence:max});
+      }
+    }
+    if(!E.settings.apiKey){
+      return Promise.resolve({source:'need_key',ids:[],kaodian:[],names:[],tokens:0,combo:false});
+    }
+    var body={model:E.settings.model,messages:[{role:'system',content:SYS},{role:'user',content:catalog()+'题目：'+q}],max_tokens:200,temperature:0,stream:false};
+    return fetchImpl('https://api.deepseek.com/chat/completions',{
+      method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+E.settings.apiKey},
+      body:JSON.stringify(body)
+    }).then(function(resp){
+      if(!resp.ok)throw new Error('DeepSeek接口错误 '+resp.status);
+      return resp.json();
+    }).then(function(data){
+      var parsed=parseDS(data.choices[0].message.content);
+      var tokens=(data.usage&&data.usage.total_tokens)||0;
+      E.stats.apiCalls++;E.stats.tokensUsed+=tokens;
+      upsertSample(key,q,parsed.ids,parsed.k,'deepseek');
+      E.cache[key]={ids:parsed.ids,kaodian:parsed.k};
+      trainAll(80);persist();
+      return {source:'deepseek',ids:parsed.ids,kaodian:parsed.k,names:names(parsed.ids),tokens:tokens,combo:parsed.ids.length>1};
+    });
+  };
+  E.confirm=function(q,ids){
+    var key=cacheKey(q),k=[];
+    for(var i=0;i<E.samples.length;i++){if(E.samples[i].key===key){k=E.samples[i].k;break;}}
+    upsertSample(key,q,ids,k,'user');
+    E.cache[key]={ids:ids,kaodian:k};
+    E.stats.corrections++;
+    trainAll(80);persist();
+    return {ids:ids,names:names(ids),combo:ids.length>1};
+  };
+  E.addMotif=function(m){
+    if(!m.name||!m.sampleQuestion||!m.triggers||!m.triggers.length||!m.rules||!m.rules.length)throw new Error('名称/例题/触发特征/识别规则为必填');
+    for(var i=0;i<E.motifs.length;i++){if(E.motifs[i].name===m.name)throw new Error('同名母题已存在');}
+    var full={name:m.name,subject:m.subject||'数学',chapter:m.chapter||'',difficulty:m.difficulty||'中档',
+      sampleQuestion:m.sampleQuestion,triggers:m.triggers,rules:m.rules,solution:m.solution||[],
+      keyPoints:m.keyPoints||[],moveName:m.moveName||'无',move:m.move||'',caveat:m.caveat||[],
+      modelIdentify:m.modelIdentify||'',source:'用户入库',learnedAt:new Date().toISOString()};
+    E.motifs.push(full);
+    var key=cacheKey(full.sampleQuestion);
+    upsertSample(key,full.sampleQuestion,[E.motifs.length-1],[],'seed');
+    trainAll(80);persist();
+    return full;
+  };
+  E.comboCount=function(){var n=0;for(var i=0;i<E.samples.length;i++){if(E.samples[i].ids.length>1)n++;}return n;};
+  E.tokensSavedEst=function(){
+    var avg=E.stats.apiCalls>0?Math.round(E.stats.tokensUsed/E.stats.apiCalls):500;
+    return (E.stats.localHits+E.stats.cacheHits)*avg;
+  };
+  E.exportData=function(){return JSON.stringify({v:1,motifs:E.motifs,samples:E.samples,cache:E.cache,stats:E.stats,exportedAt:new Date().toISOString()});};
+  E.importData=function(str){
+    var d=JSON.parse(str);
+    if(!d.motifs||!d.samples)throw new Error('备份格式不正确');
+    E.motifs=d.motifs;E.samples=d.samples;E.cache=d.cache||{};if(d.stats)E.stats=d.stats;
+    bootstrap();trainAll(80);persist();
+  };
+  E.resetLearning=function(){
+    E.samples=[];E.cache={};E.stats={apiCalls:0,tokensUsed:0,localHits:0,cacheHits:0,corrections:0};
+    bootstrap();trainAll(80);persist();
+  };
+  return E;
+}
+globalThis.MT={normalize:normalize,cacheKey:cacheKey,features:features,createEngine:createEngine,SEED:SEED};
+})();
+</script>
+
+<script>
+/* ============ 手机 UI ============ */
+(function(){
+"use strict";
+var eng=MT.createEngine({storage:window.localStorage,fetch:window.fetch.bind(window)});
+eng.init();
+var $=function(id){return document.getElementById(id);};
+var lastQ='',lastResult=null,pickIds=[];
+function toast(msg){var t=$('toast');t.textContent=msg;t.style.display='block';clearTimeout(t._h);t._h=setTimeout(function(){t.style.display='none';},2600);}
+function esc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function srcBadge(r){
+  if(r.source==='cache')return '<span class="badge b0">缓存命中 · 0 token</span>';
+  if(r.source==='local')return '<span class="badge b0">本地神经网络 · 0 token</span>'+(r.confidence?'<span class="badge b1">置信 '+r.confidence.toFixed(2)+'</span>':'');
+  if(r.source==='deepseek')return '<span class="badge b2">DeepSeek 判定 · '+r.tokens+' token</span><span class="badge b1">已学会，下次本地判</span>';
+  return '<span class="badge b3">需要先在设置里填 DeepSeek API Key</span>';
+}
+function motifCard(idx,compact){
+  var m=eng.motifs[idx];if(!m)return '';
+  var h='<div class="card"><div class="mname">'+esc(m.name)+'</div><div class="meta">'+esc(m.chapter||'')+' · '+esc(m.difficulty||'')+(m.moveName&&m.moveName!=='无'?' · 大招：'+esc(m.moveName):'')+'</div>';
+  if(!compact){
+    if(m.move&&m.moveName!=='无')h+='<div class="kp">'+esc(m.move)+'</div>';
+    if(m.solution&&m.solution.length){h+='<div class="sec">解法步骤</div><ol class="sol">'+m.solution.map(function(s){return '<li>'+esc(s)+'</li>';}).join('')+'</ol>';}
+    if(m.keyPoints&&m.keyPoints.length)h+='<div class="sec">关键点</div><div class="kp">'+esc(m.keyPoints.join('；'))+'</div>';
+    if(m.caveat&&m.caveat.length)h+='<div class="sec">易错警示</div><div class="cv">'+esc(m.caveat.join('；'))+'</div>';
+    h+='<details><summary>查看例题</summary><div class="kp math">'+esc(m.sampleQuestion)+'</div></details>';
+  }
+  return h+'</div>';
+}
+function renderResult(r){
+  lastResult=r;
+  var h='<div class="card">'+srcBadge(r);
+  if(r.combo)h+='<span class="badge b2">组合题 · '+r.ids.length+'个母题</span>';
+  if(r.kaodian&&r.kaodian.length){h+='<div class="sec">考点</div>';r.kaodian.forEach(function(k){h+='<span class="chip">'+esc(k)+'</span>';});}
+  h+='</div>';
+  if(r.source==='need_key'){h+='<div class="card"><div class="hint" style="margin:0">本地神经网络还没有把握判这道题，需要 DeepSeek 帮忙。请到「设置」填入 API Key 后重试。</div></div>';}
+  r.ids.forEach(function(i){h+=motifCard(i,false);});
+  if(r.ids.length){
+    h+='<div class="row"><button class="btn ok sm" id="btnOk">✓ 正确</button><button class="btn ghost sm" id="btnFix">✗ 改选母题</button><button class="btn ghost sm" id="btnRe">DeepSeek 重判</button></div>';
+    h+='<div class="hint">点「正确」巩固记忆；点「改选母题」纠正并教会本地网络（不花 token）；组合题可多选。</div>';
+  }
+  $('recResult').innerHTML=h;
+  if(r.ids.length){
+    $('btnOk').onclick=function(){eng.confirm(lastQ,r.ids);toast('已巩固记忆');renderStats();};
+    $('btnFix').onclick=function(){openPick(r.ids);};
+    $('btnRe').onclick=function(){doRecognize(true);};
+  }
+}
+function doRecognize(force){
+  var q=$('qInput').value.trim();
+  if(!q){toast('请先输入题目');return;}
+  lastQ=q;
+  $('recResult').innerHTML='<div class="empty">'+(force?'正在请 DeepSeek 判定…':'识别中…')+'</div>';
+  eng.recognize(q,{forceApi:!!force}).then(renderResult).catch(function(e){
+    $('recResult').innerHTML='<div class="card"><span class="badge b3">识别失败</span><div class="hint">'+esc(e.message||e)+'<br>若为网络/跨域问题请检查网络后重试；本地已学过的题不受影响。</div></div>';
+  });
+}
+function openPick(cur){
+  pickIds=cur.slice();
+  var h='';
+  eng.motifs.forEach(function(m,i){
+    h+='<label class="ck"><input type="checkbox" data-i="'+i+'"'+(pickIds.indexOf(i)>=0?' checked':'')+'><span>'+esc(m.name)+'<div class="meta" style="margin:0">'+esc(m.chapter||'')+'</div></span></label>';
+  });
+  $('pickList').innerHTML=h;
+  $('maskPick').classList.add('on');
+}
+function renderLib(){
+  var h='';
+  eng.motifs.forEach(function(m,i){h+=motifCard(i,false);});
+  $('libList').innerHTML=h||'<div class="empty">暂无母题</div>';
+}
+function renderStats(){
+  var s=eng.stats;
+  var items=[[eng.samples.length,'学习样本'],[eng.comboCount(),'已学组合'],[s.localHits,'本地命中(0token)'],[s.cacheHits,'缓存命中(0token)'],[s.apiCalls,'DeepSeek调用'],[s.tokensUsed,'累计消耗token'],[eng.tokensSavedEst(),'估算已省token'],[s.corrections,'纠正次数']];
+  $('statGrid').innerHTML=items.map(function(x){return '<div class="stat"><div class="v">'+x[0]+'</div><div class="l">'+x[1]+'</div></div>';}).join('');
+  var recent=eng.samples.slice(-20).reverse();
+  $('sampleLog').innerHTML=recent.map(function(x){
+    var src={seed:'题库例题',deepseek:'DeepSeek',user:'我的纠正'}[x.source]||x.source;
+    var ns=x.ids.map(function(i){return eng.motifs[i]?eng.motifs[i].name:'?';}).join(' + ');
+    return '<div class="logitem"><b>'+esc(ns)+'</b> ← '+esc(src)+'<br>'+esc(x.q.substring(0,60))+(x.q.length>60?'…':'')+'</div>';
+  }).join('')||'<div class="empty">暂无样本</div>';
+  $('hdSub').textContent='样本 '+eng.samples.length+' · API调用 '+s.apiCalls;
+}
+function renderSettings(){
+  $('apiKey').value=eng.settings.apiKey;
+  $('model').value=eng.settings.model;
+  $('threshold').value=eng.settings.localThreshold;
+  $('thVal').textContent=Number(eng.settings.localThreshold).toFixed(2);
+}
+/* 事件绑定 */
+document.querySelectorAll('nav button').forEach(function(b){
+  b.onclick=function(){
+    document.querySelectorAll('nav button').forEach(function(x){x.classList.remove('on');});
+    document.querySelectorAll('.tab').forEach(function(x){x.classList.remove('on');});
+    b.classList.add('on');$(b.dataset.tab).classList.add('on');
+    if(b.dataset.tab==='tab-lib')renderLib();
+    if(b.dataset.tab==='tab-learn')renderStats();
+    if(b.dataset.tab==='tab-set')renderSettings();
+  };
+});
+$('btnRec').onclick=function(){doRecognize(false);};
+$('btnPickCancel').onclick=function(){$('maskPick').classList.remove('on');};
+$('btnPickOk').onclick=function(){
+  var ids=[];
+  document.querySelectorAll('#pickList input:checked').forEach(function(c){ids.push(parseInt(c.dataset.i,10));});
+  if(!ids.length){toast('至少选一个母题');return;}
+  var r=eng.confirm(lastQ,ids);
+  $('maskPick').classList.remove('on');
+  toast(ids.length>1?'组合已确认，下次认识':'已纠正并学会');
+  renderResult({source:'cache',ids:r.ids,kaodian:(lastResult&&lastResult.kaodian)||[],names:r.names,tokens:0,combo:r.combo});
+  renderStats();
+};
+$('btnAddMotif').onclick=function(){$('maskAdd').classList.add('on');};
+$('btnAddCancel').onclick=function(){$('maskAdd').classList.remove('on');};
+$('btnAddOk').onclick=function(){
+  try{
+    var m={name:$('amName').value.trim(),chapter:$('amChapter').value.trim(),
+      sampleQuestion:$('amSample').value.trim(),
+      triggers:$('amTriggers').value.split(/[,，]/).map(function(s){return s.trim();}).filter(Boolean),
+      rules:$('amRules').value.split(/[,，]/).map(function(s){return s.trim();}).filter(Boolean),
+      moveName:$('amMoveName').value.trim()||'无',
+      solution:$('amSolution').value.split('\n').map(function(s){return s.trim();}).filter(Boolean)};
+    eng.addMotif(m);
+    $('maskAdd').classList.remove('on');
+    ['amName','amChapter','amSample','amTriggers','amRules','amMoveName','amSolution'].forEach(function(id){$(id).value='';});
+    toast('已入库并学会');renderLib();renderStats();
+  }catch(e){toast(e.message);}
+};
+$('btnExport').onclick=function(){
+  var data=eng.exportData();
+  $('exportText').value=data;$('maskExport').classList.add('on');
+  try{
+    var blob=new Blob([data],{type:'application/json'});
+    var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='母题题库备份.json';
+    document.body.appendChild(a);a.click();a.remove();
+  }catch(e){}
+};
+$('btnExportClose').onclick=function(){$('maskExport').classList.remove('on');};
+$('btnImport').onclick=function(){$('fileImport').click();};
+$('fileImport').onchange=function(){
+  var f=this.files[0];if(!f)return;
+  var rd=new FileReader();
+  rd.onload=function(){try{eng.importData(rd.result);toast('导入成功');renderStats();renderLib();}catch(e){toast('导入失败：'+e.message);}};
+  rd.readAsText(f);this.value='';
+};
+$('btnReset').onclick=function(){
+  if(confirm('确定清空全部学习样本与缓存？母题库保留，题库例题会重新自举。')){eng.resetLearning();toast('已清空');renderStats();}
+};
+$('threshold').oninput=function(){$('thVal').textContent=Number(this.value).toFixed(2);};
+$('btnSaveSet').onclick=function(){
+  eng.settings.apiKey=$('apiKey').value.trim();
+  eng.settings.model=$('model').value;
+  eng.settings.localThreshold=parseFloat($('threshold').value);
+  try{window.localStorage.setItem('mt.settings',JSON.stringify(eng.settings));}catch(e){}
+  toast('设置已保存');renderStats();
+};
+renderStats();
+})();
+</script>
+</body>
+</html>
